@@ -1,10 +1,11 @@
+```
 ===================================
 |       N E O  D E C T R A        |
 |  Audectra Compatible Firmware   |
 |      @shadoxx on Github         |
 ===================================
 
-:INTRODUCTION
+INTRODUCTION
 	Neodectra is a micro-controller firmware intended for use with Audectra, a
 	Windows based audio analyzation suite. It uses the serial data provided by
 	Audectra to drive an arbitrary (within reason) amount of LEDs using the
@@ -13,7 +14,7 @@
 	A full list of all supported chipsets can be found at the following URL:
 	https://github.com/FastLED/FastLED/wiki/Chipset-reference
 
-:HARDWARE
+HARDWARE
 	+ Teensy 3.0 or later
 	store: https://www.pjrc.com/store/teensy32.html
 	notes: I have only tested this firmware with the Teensy 3.0 so YMMV.
@@ -29,12 +30,8 @@
 		   sells a great 5V PSU.
 		   
 	+ Computer running Windows 7 or later (tested on Windows 7)
-  
-: SOFTWARE
-
-	
-		  
-:CONFIGURATION
+    
+CONFIGURATION
 I will document all of the configuration options...eventually. For now, this is
 the bare minimum needed to get you up and running.
 
@@ -59,5 +56,12 @@ the bare minimum needed to get you up and running.
 				
 		STRIP_LENGTH	The number of LEDs you intend to drive with Neodectra.
 		
-		
+	4. After you're done tweaking the config, compile and upload the sketch to
+	   your Teensy. If the firmware upload was successful, your LEDs will flash
+	   bright white and then fade away.
+	   
+	5. Open up Audectra and switch to "Music Controlled" mode.
 	
+That's all you need to do for now. If you have any problems, open up a new issue
+on Github.
+```
