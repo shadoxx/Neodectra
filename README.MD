@@ -13,6 +13,9 @@ INTRODUCTION
   
 	A full list of all supported chipsets can be found at the following URL:
 	https://github.com/FastLED/FastLED/wiki/Chipset-reference
+	
+	You can follow development progress on the Audectra Forum:
+	http://www.audectra.com/forum/post137.html
 
 HARDWARE
 	+ Teensy 3.0 or later
