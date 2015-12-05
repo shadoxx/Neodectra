@@ -11,13 +11,12 @@
 *   represent or claim to represent Audectra in any way, shape, or form.
 *
 * FILE: Neodectra.ino
-* DESC: Our main codebase for the Arduino
-*
+* DESC: Our main codebase for the Teensy
 *
 * TODO:
-*  - implement new FastSPI v2 library
 *  - introduce support for HSV instead of RGB. intensity of color depends on
 *    range of value
+*  - Implement latest version of FastLED (version 3.1 as of writing)
 *    
 ******************************************************************************/
 // FIRMWARE VERSION
@@ -31,16 +30,10 @@
 void fadeAfterDelay( DelayTimer *dTimer, uint8_t fDelay, uint8_t fPercentage );
 void colorSetSquare( RGBValue rgbPixel );
 
-// CONFIG: TESTING
-#define AUDECTRA_VERSION        1
-#define POTPIN  A0
-#define POT_READ false
-
 // GLOBAL VARIABLES
 CRGB ledStrip[STRIP_LENGTH];
 DelayTimer UpdateDelay, LFODelay, FadeDelay, VUDelay;
 uint8_t Offset = 0;
-uint8_t CurrentEffect = 4;
 boolean Increase, HasIdentified;
 
 void setup() {
@@ -60,7 +53,7 @@ void setup() {
   HasIdentified = false;
 
   FastLED.show();  // update our strip, to blank out everything
-  delay(500);  // let the teensy get to a ready state
+  delay(500);      // let the teensy get to a ready state
 }
 
 void loop() {
@@ -74,8 +67,7 @@ void loop() {
     if( UpdateDelay.currTime - UpdateDelay.prevTime > SAMPLERATE ) {
       UpdateDelay.prevTime = UpdateDelay.currTime;
       
-      /*** THIS IS WHERE YOU SET THE EFFECTS. CHANGE CurrentEffect FOR DIFFERENT EFFECTS ***/
-      switch( CurrentEffect ) {
+      switch( CURRENT_EFFECT ) {
         case 0:
           colorSetAll( buffer[0+AUDECTRA_VERSION], buffer[1+AUDECTRA_VERSION], buffer[2+AUDECTRA_VERSION] );
           break;
