@@ -19,6 +19,7 @@
 #define AUDECTRA_VERSION        1
 #define POTPIN                  A0
 #define POT_READ                0
+#define BRIGHTNESS              42
 
 // ** CONFIG: MICROCONTROLLER *************************************************
 #define	DATAPIN			6               // pin the LED data-in line is connected to on the Arduino
@@ -27,7 +28,6 @@
 // ** CONFIG: FASTSPI *********************************************************
 #define	CHIPSET			WS2812	        // chipset we're planning on controlling (read FastSPI documentation)
 #define	PIXEL_ORDER		GRB		// led color pixel order, discovered by running FastSPI calibration sketch
-#define BRIGHTNESS              64
 #define	STRIP_LENGTH		512		// the number of LEDs we'll be controlling
 #define STRIP_CENTER	        STRIP_LENGTH / 2
 
@@ -46,8 +46,8 @@
 #define	FADE_PERCENT	        10
 
 // LFO (Audectra Settings: Bass[90,2] - Mid[70,18] - High[34,32])
-#define LFO_RATE		100
-#define	SAMPLERATE		5	    // how often we poll for data, in milliseconds
+#define LFO_RATE		10
+#define	SAMPLERATE		8	    // how often we poll for data, in milliseconds
 
 // VU METER (Audectra Settings: Bass[85,8] - Mid[65,16] - High[35,32])
 #define	VU_DELAY			20  // in milliseconds
