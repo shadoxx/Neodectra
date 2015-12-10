@@ -97,6 +97,10 @@ void loop() {
       }
     }
 
+    // from lib8tion.h
+    uint8_t bright = beatsin8( 128 /*BPM*/, 180 /*dimmest*/, 220 /*brightest*/ );
+    FastLED.setBrightness( bright );
+    
     FastLED.show();
   }
   else {
@@ -184,7 +188,7 @@ void fwIdentify() {
 
 unsigned int readPot() {
   unsigned int readVal = map(analogRead(POTPIN), 0, 1023, 0, MAX_VOLUME_RANGE);
-  if( !POT_READ ) readVal = 3200;  // magic value that seems to work best
+  if( !POT_READ ) readVal = 256;  // magic value that seems to work best
   return readVal;
 
   //return map(analogRead(POTPIN), 0, 1023, 0, MAX_VOLUME_RANGE);
@@ -192,7 +196,7 @@ unsigned int readPot() {
 
 unsigned int volCalc(uint8_t* freqHi, uint8_t* freqMid, uint8_t* freqLow, uint8_t MasterGain) {
   // return a "Volume" level by combining all of our color codes, then multiplying them by a gain
-  return ( ((*freqHi * HI_GAIN) + (*freqMid * MID_GAIN) + (*freqLow * LOW_GAIN)) / 3) * MasterGain;
+  return ( (((int)freqHi * HI_GAIN) + ((int)freqMid * MID_GAIN) + ((int)freqLow * LOW_GAIN)) / 3) * MasterGain;
 }
 
 // lfoCalc: counts up to lfoMax, then starts counting down, then does it again

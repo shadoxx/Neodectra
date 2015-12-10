@@ -18,7 +18,7 @@
 #define CURRENT_EFFECT          4
 #define AUDECTRA_VERSION        1
 #define POTPIN                  A0
-#define POT_READ                0
+#define POT_READ                false
 #define BRIGHTNESS              48
 
 // ** CONFIG: MICROCONTROLLER *************************************************
@@ -51,8 +51,8 @@
 
 // VU METER (Audectra Settings: Bass[85,8] - Mid[65,16] - High[35,32])
 #define	VU_DELAY			20  // in milliseconds
-#define	MASTER_GAIN			15
-#define	HI_GAIN				5
-#define MID_GAIN			5
-#define LOW_GAIN			5
+#define	MASTER_GAIN			1
+#define	HI_GAIN				1
+#define MID_GAIN			1
+#define LOW_GAIN			1
 #define MAX_VOLUME_RANGE	(((255 * HI_GAIN) + (255 * MID_GAIN) + (255 * LOW_GAIN)) /3) * MASTER_GAIN
