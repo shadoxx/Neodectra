@@ -19,7 +19,7 @@
 #define AUDECTRA_VERSION        1
 #define POTPIN                  A0
 #define POT_READ                0
-#define BRIGHTNESS              42
+#define BRIGHTNESS              48
 
 // ** CONFIG: MICROCONTROLLER *************************************************
 #define	DATAPIN			6               // pin the LED data-in line is connected to on the Arduino
@@ -42,12 +42,12 @@
 // ** CONFIG: EFFECTS *********************************************************
 
 // FADE
-#define	FADE_DELAY		20
-#define	FADE_PERCENT	        10
+#define	FADE_DELAY		10
+#define	FADE_PERCENT	        2
 
 // LFO (Audectra Settings: Bass[90,2] - Mid[70,18] - High[34,32])
-#define LFO_RATE		10
-#define	SAMPLERATE		8	    // how often we poll for data, in milliseconds
+#define LFO_RATE		64
+#define	SAMPLERATE		32	    // how often we poll for data, in milliseconds
 
 // VU METER (Audectra Settings: Bass[85,8] - Mid[65,16] - High[35,32])
 #define	VU_DELAY			20  // in milliseconds
