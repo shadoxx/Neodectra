@@ -176,7 +176,7 @@ void colorSetVUSplit(uint8_t Red, uint8_t Green, uint8_t Blue) {
 
 // UTILITY FUNCTIONS
 void fwIdentify() {
-  HasIdentified == true;
+  HasIdentified = true;
   memset(ledStrip, 50, STRIP_LENGTH * sizeof(struct CRGB));
   Serial.println("DIYAudectra"); // ID
   Serial.println("1.1.0\n");  // Firmware Version
