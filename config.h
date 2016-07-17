@@ -15,11 +15,12 @@
 ******************************************************************************/
 
 // ** CONFIG: MAIN ************************************************************
-#define CURRENT_EFFECT          4
+#define CURRENT_EFFECT          5
 #define AUDECTRA_VERSION        1
 #define POTPIN                  A0
 #define POT_READ                false
-#define BRIGHTNESS              48
+//#define BRIGHTNESS              48    // THE DEFAULT. JUST IN CASE WE LOSE IT. 48 MAGIC NUMBER. HARDCODED TO FASTLED LIBRARY.
+#define BRIGHTNESS              200  // THIS IS VERY BRIGHT!
 
 // ** CONFIG: MICROCONTROLLER *************************************************
 #define	DATAPIN			6               // pin the LED data-in line is connected to on the Arduino
@@ -42,12 +43,12 @@
 // ** CONFIG: EFFECTS *********************************************************
 
 // FADE
-#define	FADE_DELAY		10
-#define	FADE_PERCENT	        2
+#define	FADE_DELAY		2
+#define	FADE_PERCENT	        4
 
 // LFO (Audectra Settings: Bass[90,2] - Mid[70,18] - High[34,32])
 #define LFO_RATE		64
-#define	SAMPLERATE		32	    // how often we poll for data, in milliseconds
+#define	SAMPLERATE		8	    // how often we poll for data, in milliseconds
 
 // VU METER (Audectra Settings: Bass[85,8] - Mid[65,16] - High[35,32])
 #define	VU_DELAY			20  // in milliseconds
@@ -56,3 +57,6 @@
 #define MID_GAIN			1
 #define LOW_GAIN			1
 #define MAX_VOLUME_RANGE	(((255 * HI_GAIN) + (255 * MID_GAIN) + (255 * LOW_GAIN)) /3) * MASTER_GAIN
+
+// NOISE
+#define INTENSITY    20
