@@ -34,7 +34,7 @@ void colorSetSquare( RGBValue rgbPixel );
 CRGB ledStrip[STRIP_LENGTH];
 DelayTimer UpdateDelay, LFODelay, FadeDelay, VUDelay;
 uint8_t Offset = 0;
-boolean Increase, HasIdentified;
+boolean Increase, HasIdentified, fadeDelayEnabled;
 
 void setup() {
   LEDS.setBrightness(BRIGHTNESS);  // between 0 and 255, default 25% brightness (64)
@@ -42,6 +42,8 @@ void setup() {
   memset(ledStrip, 0,  STRIP_LENGTH * sizeof(struct CRGB));  // set all LEDs to off
 
   pinMode(DATAPIN, OUTPUT);  // setup serial interface for communication
+  pinMode(17,      INPUT);   // input for rng
+  pinMode(5,       INPUT);   // input for rng
 
   Serial.begin(BAUDRATE);
 
@@ -51,6 +53,10 @@ void setup() {
   UpdateDelay.prevTime = 0;
   LFODelay.prevTime = 0;
   HasIdentified = false;
+  fadeDelayEnabled = true;
+
+  // seed the rng for static function
+  randomSeed( analogRead(17) ^ analogRead(5) );
 
   FastLED.show();  // update our strip, to blank out everything
   delay(500);      // let the teensy get to a ready state
@@ -67,6 +73,11 @@ void loop() {
     if( UpdateDelay.currTime - UpdateDelay.prevTime > SAMPLERATE ) {
       UpdateDelay.prevTime = UpdateDelay.currTime;
       
+      RGBValue thisPixel;
+      thisPixel.Red    = buffer[0+AUDECTRA_VERSION];
+      thisPixel.Green  = buffer[1+AUDECTRA_VERSION];
+      thisPixel.Blue   = buffer[2+AUDECTRA_VERSION];
+      
       switch( CURRENT_EFFECT ) {
         case 0:
           colorSetAll( buffer[0+AUDECTRA_VERSION], buffer[1+AUDECTRA_VERSION], buffer[2+AUDECTRA_VERSION] );
@@ -81,25 +92,29 @@ void loop() {
           colorSetVUSplit( buffer[0+AUDECTRA_VERSION], buffer[1+AUDECTRA_VERSION], buffer[2+AUDECTRA_VERSION] );
           break;
         case 4:
-          RGBValue thisPixel;
-          thisPixel.Red    = buffer[0+AUDECTRA_VERSION];
-          thisPixel.Green  = buffer[1+AUDECTRA_VERSION];
-          thisPixel.Blue   = buffer[2+AUDECTRA_VERSION];
           // trying something funky
-          ( thisPixel.Red > 200 ) ? colorSetSplit( thisPixel.Red, thisPixel.Green, thisPixel.Blue, &Offset ) : colorSetSquare( &thisPixel );
+          ( thisPixel.Red > 120 ) ? colorSetSplit( thisPixel.Red, thisPixel.Green, thisPixel.Blue, &Offset ) : colorSetSquare( &thisPixel );
           mirrorDisplay();
           break;
+        case 5:
+            ( thisPixel.Red > 120 ) ? colorSetSplit( (thisPixel.Red ^ thisPixel.Green ^ thisPixel.Blue), thisPixel.Green, thisPixel.Blue, &Offset ) : drawInner( &thisPixel );
+            mirrorDisplay();
+            if( VUDelay.currTime - VUDelay.prevTime > VU_DELAY ) {
+              colorSetNoise( &thisPixel );
+            }
+            
+            break;
       }
 
-      if( LFODelay.currTime - LFODelay.prevTime > LFO_RATE ) {
+      if( fadeDelayEnabled == true && (LFODelay.currTime - LFODelay.prevTime > LFO_RATE) ) {
         LFODelay.prevTime = LFODelay.currTime;
         lfoCalc(2, &Offset, &Increase);
       }
     }
 
     // from lib8tion.h
-    uint8_t bright = beatsin8( 128 /*BPM*/, 180 /*dimmest*/, 220 /*brightest*/ );
-    FastLED.setBrightness( bright );
+    //uint8_t bright = beatsin8( 128 /*BPM*/, 180 /*dimmest*/, 220 /*brightest*/ );
+    //FastLED.setBrightness( bright );
     
     FastLED.show();
   }
@@ -153,6 +168,7 @@ void colorSetSplit(uint8_t Red, uint8_t Green, uint8_t Blue, uint8_t* DelayOffse
 void colorSetVU(uint8_t Red, uint8_t Green, uint8_t Blue, uint8_t vuGain) {
   unsigned int maxBounds = map(volCalc(&Red, &Green, &Blue, vuGain), 0, (255*3), 0, STRIP_LENGTH);
   unsigned int newBounds = map(volCalc(&Red, &Green, &Blue, vuGain), 0, (255*3), 0, STRIP_LENGTH);
+  
   (abs(newBounds - maxBounds) > STRIP_LENGTH/32) ? maxBounds = newBounds : maxBounds -= 5;
   
   if( VUDelay.currTime - VUDelay.prevTime > VU_DELAY ) {
@@ -176,6 +192,24 @@ void colorSetVUSplit(uint8_t Red, uint8_t Green, uint8_t Blue) {
     if( i > maxBounds ) ledStrip[STRIP_CENTER + i] = CRGB( 0, 0, 0 );
     ledStrip[(STRIP_CENTER - 1) - i] = ledStrip[STRIP_CENTER + i];  // left
   }
+}
+
+void colorSetNoise( RGBValue *rgbPixel ) {
+    //lfoCalc( 255, &Offset, &Increase ); // change the hue every so often
+    
+    //for( int i = 0; i <= INTENSITY; i++ )
+    //{
+    // https://github.com/FastLED/FastLED/wiki/FastLED-HSV-Colors
+     
+      uint8_t RndHue   = getHueFromRGB( rgbPixel->Red, rgbPixel->Green, rgbPixel->Blue );
+      //uint8_t RndSat   = random(50,150);
+      uint8_t RndSat   = random(50,200);
+      uint8_t RndVib   = random(150);
+      
+      for( int f = 0; f <= 4; f++ ) {
+        ledStrip[random(STRIP_LENGTH)] = CHSV( RndHue, RndSat, RndVib );
+      }
+    //} 
 }
 
 // UTILITY FUNCTIONS
@@ -236,16 +270,16 @@ void drawSquare( int x_size, int y_size, int x_offset, int y_offset, RGBValue *r
 void drawOuter( RGBValue *rgbPixel )
 { // outer ring is Red because we're subtracting red and blue values
   RGBValue thisPixel = *rgbPixel;
+  
   thisPixel.Green = 0;
   thisPixel.Blue = 0;
+  
   drawSquare( 4, 16,  0,  0, &thisPixel);
   drawSquare( 8,  4,  4,  0, &thisPixel);
   drawSquare( 8,  4,  4, 12, &thisPixel);
   drawSquare( 4, 16, 12,  0, &thisPixel);
 }
 
-// 12/2/2015, fuck you past brandon. you're a real dick. wtf does this function even do.
-// 12/3/2015, oh, ok nevermind. sorry.
 void drawMiddle( RGBValue *rgbPixel )
 {
   if( rgbPixel->Blue > 0 ) {
@@ -268,6 +302,28 @@ void drawInner( RGBValue *rgbPixel )
   }
 }
 
+// returns the hue of an RGB object
+// slightly modified from a java example on StackOverflow. I didn't save the link I'm sorry!
+unsigned int getHueFromRGB(int red, int green, int blue) {
+    float min = min(min(red, green), blue);
+    float max = max(max(red, green), blue);
+
+    float hue = 0x0f;
+    
+    if (max == red) {
+        hue = (green - blue) / (max - min);
+    } else if (max == green) {
+        hue = 0x2f + (blue - red) / (max - min);
+    } else {
+        hue = 0x4f + (red - green) / (max - min);
+    }
+
+    hue = hue * 60;
+    if (hue < 0) hue = hue + 360;
+
+    return round(hue);
+}
+
 // this is just a quick function to copy the contents of the left panel over to the right panel
 // of a 16x16 grid. messy, and hopefully won't be here for long. should really be done with
 // the memset() function, but that's really hard and i don't feel like doing that right now.
@@ -276,6 +332,7 @@ void mirrorDisplay()
 {
   for( int i = 0; i < 256; i++ )
   {
-    ledStrip[i+256] = ledStrip[i];
+    ledStrip[i+256] = ledStrip[i];  // for the second panel in sequence
+    ledStrip[i+512] = ledStrip[i];  // for the third panel in sequence
   }
 }
