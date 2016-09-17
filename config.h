@@ -5,7 +5,7 @@
 * Audectra written by A1i3n37 [support@audectra.com]
 *
 * This program is provided as is. People with epilepsy should exercise extreme
-*   caution when using this firmware. All rights to Audectra are retained by
+*   caution when using this firmware. All rights to Audectra are retained byiuiu
 *   A1i3n37 and his team. Neodectra is an independent project, and does not
 *   represent or claim to represent Audectra in any way, shape, or form.
 *
@@ -27,9 +27,9 @@
 #define	BAUDRATE		9600            // baud rate for serial/COM communication, usually 9600
 
 // ** CONFIG: FASTSPI *********************************************************
-#define	CHIPSET			WS2812	        // chipset we're planning on controlling (read FastSPI documentation)
+#define	CHIPSET			WS2812B	        // chipset we're planning on controlling (read FastSPI documentation)
 #define	PIXEL_ORDER		GRB		// led color pixel order, discovered by running FastSPI calibration sketch
-#define	STRIP_LENGTH		512		// the number of LEDs we'll be controlling
+#define	STRIP_LENGTH		768		// the number of LEDs we'll be controlling
 #define STRIP_CENTER	        STRIP_LENGTH / 2
 
 // ** CONFIG: NETWORK *********************************************************
@@ -43,12 +43,12 @@
 // ** CONFIG: EFFECTS *********************************************************
 
 // FADE
-#define	FADE_DELAY		2
-#define	FADE_PERCENT	        4
+#define	FADE_DELAY		5
+#define	FADE_PERCENT	        5
 
 // LFO (Audectra Settings: Bass[90,2] - Mid[70,18] - High[34,32])
 #define LFO_RATE		64
-#define	SAMPLERATE		8	    // how often we poll for data, in milliseconds
+#define	SAMPLERATE		0	    // how often we poll for data, in milliseconds
 
 // VU METER (Audectra Settings: Bass[85,8] - Mid[65,16] - High[35,32])
 #define	VU_DELAY			20  // in milliseconds
@@ -59,4 +59,4 @@
 #define MAX_VOLUME_RANGE	(((255 * HI_GAIN) + (255 * MID_GAIN) + (255 * LOW_GAIN)) /3) * MASTER_GAIN
 
 // NOISE
-#define INTENSITY    20
+#define INTENSITY    30

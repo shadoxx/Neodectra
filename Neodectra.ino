@@ -55,7 +55,7 @@ void setup() {
   HasIdentified = false;
   fadeDelayEnabled = true;
 
-  // seed the rng
+  // seed the rng for static function
   randomSeed( analogRead(17) ^ analogRead(5) );
 
   FastLED.show();  // update our strip, to blank out everything
@@ -93,7 +93,7 @@ void loop() {
           break;
         case 4:
           // trying something funky
-          ( thisPixel.Red > 120 ) ? colorSetSplit( (thisPixel.Red ^ thisPixel.Green ^ thisPixel.Blue), thisPixel.Green, thisPixel.Blue, &Offset ) : colorSetSquare( &thisPixel );
+          ( thisPixel.Red > 120 ) ? colorSetSplit( thisPixel.Red, thisPixel.Green, thisPixel.Blue, &Offset ) : colorSetSquare( &thisPixel );
           mirrorDisplay();
           break;
         case 5:
@@ -113,8 +113,8 @@ void loop() {
     }
 
     // from lib8tion.h
-    uint8_t bright = beatsin8( 128 /*BPM*/, 180 /*dimmest*/, 220 /*brightest*/ );
-    FastLED.setBrightness( bright );
+    //uint8_t bright = beatsin8( 128 /*BPM*/, 180 /*dimmest*/, 220 /*brightest*/ );
+    //FastLED.setBrightness( bright );
     
     FastLED.show();
   }
@@ -270,16 +270,16 @@ void drawSquare( int x_size, int y_size, int x_offset, int y_offset, RGBValue *r
 void drawOuter( RGBValue *rgbPixel )
 { // outer ring is Red because we're subtracting red and blue values
   RGBValue thisPixel = *rgbPixel;
+  
   thisPixel.Green = 0;
   thisPixel.Blue = 0;
+  
   drawSquare( 4, 16,  0,  0, &thisPixel);
   drawSquare( 8,  4,  4,  0, &thisPixel);
   drawSquare( 8,  4,  4, 12, &thisPixel);
   drawSquare( 4, 16, 12,  0, &thisPixel);
 }
 
-// 12/2/2015, fuck you past brandon. you're a real dick. wtf does this function even do.
-// 12/3/2015, oh, ok nevermind. sorry.
 void drawMiddle( RGBValue *rgbPixel )
 {
   if( rgbPixel->Blue > 0 ) {
@@ -309,6 +309,7 @@ unsigned int getHueFromRGB(int red, int green, int blue) {
     float max = max(max(red, green), blue);
 
     float hue = 0x0f;
+    
     if (max == red) {
         hue = (green - blue) / (max - min);
     } else if (max == green) {
@@ -331,6 +332,7 @@ void mirrorDisplay()
 {
   for( int i = 0; i < 256; i++ )
   {
-    ledStrip[i+256] = ledStrip[i];
+    ledStrip[i+256] = ledStrip[i];  // for the second panel in sequence
+    ledStrip[i+512] = ledStrip[i];  // for the third panel in sequence
   }
 }
