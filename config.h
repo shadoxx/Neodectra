@@ -15,20 +15,20 @@
 ******************************************************************************/
 
 // ** CONFIG: MAIN ************************************************************
-#define CURRENT_EFFECT          5
+#define CURRENT_EFFECT          6
 #define AUDECTRA_VERSION        1
 #define POTPIN                  A0
 #define POT_READ                false
-//#define BRIGHTNESS              48    // THE DEFAULT. JUST IN CASE WE LOSE IT. 48 MAGIC NUMBER. HARDCODED TO FASTLED LIBRARY.
-#define BRIGHTNESS              200  // THIS IS VERY BRIGHT!
+#define BRIGHTNESS              48    // THE DEFAULT. JUST IN CASE WE LOSE IT. 48 MAGIC NUMBER. HARDCODED TO FASTLED LIBRARY.
+//#define BRIGHTNESS              200  // THIS IS VERY BRIGHT!
 
 // ** CONFIG: MICROCONTROLLER *************************************************
 #define	DATAPIN			6               // pin the LED data-in line is connected to on the Arduino
 #define	BAUDRATE		9600            // baud rate for serial/COM communication, usually 9600
 
 // ** CONFIG: FASTSPI *********************************************************
-#define	CHIPSET			WS2812B	        // chipset we're planning on controlling (read FastSPI documentation)
-#define	PIXEL_ORDER		GRB		// led color pixel order, discovered by running FastSPI calibration sketch
+#define	CHIPSET			WS2812B	        // chipset we're planning on controlling (read FastLED documentation)
+#define	PIXEL_ORDER		GRB		// led color pixel order, discovered by running FastLED calibration sketch
 #define	STRIP_LENGTH		768		// the number of LEDs we'll be controlling
 #define STRIP_CENTER	        STRIP_LENGTH / 2
 
@@ -48,7 +48,7 @@
 
 // LFO (Audectra Settings: Bass[90,2] - Mid[70,18] - High[34,32])
 #define LFO_RATE		64
-#define	SAMPLERATE		0	    // how often we poll for data, in milliseconds
+#define	SAMPLERATE		10	    // how often we poll for data, in milliseconds
 
 // VU METER (Audectra Settings: Bass[85,8] - Mid[65,16] - High[35,32])
 #define	VU_DELAY			20  // in milliseconds
