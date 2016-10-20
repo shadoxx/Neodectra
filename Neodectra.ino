@@ -34,6 +34,7 @@ void colorSetSquare( RGBValue rgbPixel );
 CRGB ledStrip[STRIP_LENGTH];
 DelayTimer UpdateDelay, LFODelay, FadeDelay, VUDelay;
 uint8_t Offset = 0;
+uint16_t cursorPixel = 0;
 boolean Increase, HasIdentified, fadeDelayEnabled;
 
 void setup() {
@@ -79,6 +80,7 @@ void loop() {
       thisPixel.Blue   = buffer[2+AUDECTRA_VERSION];
       
       switch( CURRENT_EFFECT ) {
+      //switch( random(4,6) ) {
         case 0:
           colorSetAll( buffer[0+AUDECTRA_VERSION], buffer[1+AUDECTRA_VERSION], buffer[2+AUDECTRA_VERSION] );
           break;
@@ -102,7 +104,25 @@ void loop() {
             if( VUDelay.currTime - VUDelay.prevTime > VU_DELAY ) {
               colorSetNoise( &thisPixel );
             }
+            break;
+        case 6:
+            //ledStrip[linearCalc(0, 0, 16, 16)] = CRGB(thisPixel.Red, thisPixel.Green, thisPixel.Blue );
+            if( VUDelay.currTime - VUDelay.prevTime > VU_DELAY ) {
+              drawOuter(&thisPixel);
+              drawMiddle(&thisPixel);
+              colorSetNoise( &thisPixel );
+            }
             
+            //line( random( 0, 3), random( 0, 3), random(12,16), random(12,16), &thisPixel);
+            //line( random( 0, 3), random(12,16), random(12,16), random( 0, 3), &thisPixel);
+            //line( random( 0, 2), random( 0, 2), random(14,16), random(14,16), &thisPixel);
+            //line( random( 0, 2), random(14,16), random(14,16), random( 0, 2), &thisPixel);
+            line( 7, 0, 7, 16, &thisPixel);
+            line( 8, 0, 8, 16, &thisPixel);
+            //line( 0, 7, 16, 7, &thisPixel);
+            //line( 0, 8, 16, 8, &thisPixel);
+            
+            mirrorDisplay();
             break;
       }
 
@@ -204,7 +224,7 @@ void colorSetNoise( RGBValue *rgbPixel ) {
       uint8_t RndHue   = getHueFromRGB( rgbPixel->Red, rgbPixel->Green, rgbPixel->Blue );
       //uint8_t RndSat   = random(50,150);
       uint8_t RndSat   = random(50,200);
-      uint8_t RndVib   = random(150);
+      uint8_t RndVib   = random(100,200);
       
       for( int f = 0; f <= 4; f++ ) {
         ledStrip[random(STRIP_LENGTH)] = CHSV( RndHue, RndSat, RndVib );
@@ -334,5 +354,22 @@ void mirrorDisplay()
   {
     ledStrip[i+256] = ledStrip[i];  // for the second panel in sequence
     ledStrip[i+512] = ledStrip[i];  // for the third panel in sequence
+  }
+}
+
+// https://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C
+// This algorithm draws a line. You can't get simpler than a line. :D
+void line(int x0, int y0, int x1, int y1, RGBValue *rgbPixel) {
+ 
+  int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
+  int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1; 
+  int err = (dx>dy ? dx : -dy)/2, e2;
+ 
+  for(;;){
+    ledStrip[linearCalc(x0, y0, 16, 16)] = CRGB(rgbPixel->Red, rgbPixel->Green, rgbPixel->Blue );
+    if (x0==x1 && y0==y1) break;
+    e2 = err;
+    if (e2 >-dx) { err -= dy; x0 += sx; }
+    if (e2 < dy) { err += dx; y0 += sy; }
   }
 }
