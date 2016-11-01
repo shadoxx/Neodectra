@@ -279,6 +279,17 @@ unsigned int linearCalc( unsigned int x, unsigned int y, unsigned int x_len, uns
   return x_len * x + y + ((x_len - 1) - (y % x_len)*2) * (x % 2);
 }
 
+// For tiled Grids of LEDs
+unsigned int xyCalc( unsigned int x, unsigned int y, unsigned int x_len, unsigned int y_len )
+{
+    uint8_t j = x / x_len;
+
+    uint8_t xj = x - j * x_len;
+    uint8_t yj = y;
+
+    return j * (x_len * y_len) + linearCalc( xj, yj, x_len, y_len );
+}
+
 void drawSquare( int x_size, int y_size, int x_offset, int y_offset, RGBValue *rgbPixel ) {
   for( int y = y_offset; y < (y_size + y_offset); y++ ) {
     for( int x = x_offset; x < (x_size + x_offset); x++ ) {
