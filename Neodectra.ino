@@ -23,8 +23,12 @@
 
 // INCLUDES
 #include "FastLED.h"
-#include "config.h"
+
+#include <LEDMatrix.h>
+#include <LEDSprites.h>
+
 #include "Neodectra.h"
+#include "config.h"
 
 // FUNCTION PROTOTYPES
 void fadeAfterDelay( DelayTimer *dTimer, uint8_t fDelay, uint8_t fPercentage );
@@ -49,7 +53,7 @@ void setup() {
   Serial.begin(BAUDRATE);
 
   // flash our LEDS to let us know initialization succeeded
-  memset(ledStrip, 100, STRIP_LENGTH * sizeof(struct CRGB));
+  FastLED.showColor(CRGB::White);
 
   UpdateDelay.prevTime = 0;
   LFODelay.prevTime = 0;
